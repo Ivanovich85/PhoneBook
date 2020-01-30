@@ -1,5 +1,8 @@
 package claim;
 
+import java.io.IOException;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class PhoneBook {
@@ -7,37 +10,37 @@ public class PhoneBook {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		int userInput;
-		PhoneNumber searchPhoneNum;
-		String searchName;
+//		PhoneNumber searchPhoneNum;
+//		String searchName;
 		boolean again = true;
 		Person[] persons= new Person[0];
 		Person[] searchListPersons= new Person[0];
 		Person tempPerson=null;	
 		
+		
 		while(again){
-			
-			userInput = mainMenu(scanner);
+			userInput = mainMenu();
 			
 			switch(userInput){
 				case 1://add a person
-					tempPerson = getPersonInfo(scanner);
+					tempPerson = getPersonInfo();
 					persons = Person.addPerson(persons, tempPerson);
 					break;
 					
 				case 2:// delete a person
-					persons = removePerson(persons, scanner);
+					persons = removePerson(persons);
 					//delete by phone numbers
 					break;
 					
 				case 3://search Menu
-					userInput = searchMenuDisplay(scanner);
-					searchListPersons = searchingForAPerson(persons, userInput, scanner);
+					userInput = searchMenuDisplay();
+					searchListPersons = searchingForAPerson(persons, userInput);
 					System.out.println("Search results: ");
 					displayResults(searchListPersons);
 					break;
 					
 				case 4://update a phone number
-					persons = updatePhoneNum(persons, scanner);
+					persons = updatePhoneNum(persons);
 					break;
 					
 				case 5://print all people in the array
@@ -54,10 +57,10 @@ public class PhoneBook {
 					System.out.println("You entered a value that is not on the menu");
 					break;
 			}
-			System.out.println("");
-
-		}		
-		scanner.close();
+		}
+		System.out.println("");
+			
+		
 	}
 
 	
@@ -73,7 +76,8 @@ public class PhoneBook {
 	}
 
 
-	public static Person[] updatePhoneNum(Person[] persons, Scanner scanner) {
+	public static Person[] updatePhoneNum(Person[] persons) {
+		Scanner scanner = new Scanner(System.in);
 		Person[] tempArray = new Person[persons.length];
 		Person tempPerson = new Person();
 		System.out.println("please enter the phone number you would like to update:");
@@ -89,11 +93,13 @@ public class PhoneBook {
 				tempArray[i]=tempPerson;
 			}
 		}
+		scanner.close();
 		return tempArray;
 	}
 
 
-	private static Person[] removePerson(Person[] persons, Scanner scanner) {
+	private static Person[] removePerson(Person[] persons) {
+		Scanner scanner = new Scanner(System.in);
 		Person[] tempArray = new Person[0];
 		Person tempPerson;
 		String toSearch;
@@ -107,11 +113,13 @@ public class PhoneBook {
 			}
 		}
 		
+		scanner.close();
 		return tempArray;
 	}
 
 
-	public static Person[] searchingForAPerson(Person[] persons, int userInput, Scanner scanner) {
+	public static Person[] searchingForAPerson(Person[] persons, int userInput) {
+		Scanner scanner = new Scanner(System.in);
 		Person[] searchResult= new Person[0];
 		String toSearch = scanner.nextLine();
 
@@ -150,6 +158,7 @@ public class PhoneBook {
 			default:
 				System.out.println("You entered a value outside the give menu");
 		}
+		scanner.close();
 		return searchResult;
 	}
 	
@@ -229,13 +238,18 @@ public class PhoneBook {
 		return tempArray;
 	}
 
-	public static Person getPersonInfo(Scanner scanner) {
-		Person temp;
+	public static Person getPersonInfo() {
+		Scanner scanner = new Scanner(System.in);
+		Person temp=null;
+		try{
+		
+		
 		String[] strInfo;
-		String info= scanner.nextLine();
+		String info;// = scanner.nextLine();
 		String fullName, address, city, state, zipCode, phoneNumber;
 		System.out.println("\nPlease Enter the person's information you would like to add:\nExample: (Full name, address, city, "
 						+ "state, zip code, phone number)");
+//		boolean here = scanner.hasNextLine();
 		//System.out.println("");
 		info = scanner.nextLine();
 		
@@ -257,24 +271,39 @@ public class PhoneBook {
 		zipCode =  strInfo[4].replace(" ", "");
 		phoneNumber = strInfo[5].replace(" ", "");
 		temp = new Person(fullName, address, city, state, zipCode, phoneNumber);
+		}catch(NoSuchElementException e){
+			
+		}
+//		scanner.close();
 		return temp;
 	}
 
-	public static int mainMenu(Scanner scanner) {
+	public static int mainMenu() {
 		int userInput=0;
+		try{
+			
+			Scanner scanner = new Scanner(System.in);
+			System.out.println("*****PhoneBook******--PhNumoogle--******PhoneBook*****");
+			System.out.println("\nMain Menu:            ");
+			System.out.println("Enter '1' to add a person\nEnter '2' to remove a person\nEnter '3' to search for a person"+
+							"\nEnter '4' to update a telephone number\nEnter '5' to show all of the people in the system "+
+							"\nEnter '6' to quit the program");
+			
+			userInput = scanner.nextInt();
+//			scanner.close();
+//			scanner.close();
+//			return userInput;
+		}catch(NoSuchElementException ex){
+			System.out.println("Please enter a valid number");
+			//mainMenu();	
+			
+		}
 		
-		System.out.println("*****PhoneBook******--PhNumoogle--******PhoneBook*****");
-		System.out.println("\nMain Menu:            ");
-		System.out.println("Enter '1' to add a person\nEnter '2' to remove a person\nEnter '3' to search for a person"+
-						"\nEnter '4' to update a telephone number\nEnter '5' to show all of the people in the system "+
-						"\nEnter '6' to quit the program");
-		
-		userInput = scanner.nextInt();
-
 		return userInput;
 	}
 
-	public static int searchMenuDisplay(Scanner scanner) {
+	public static int searchMenuDisplay() {
+		Scanner scanner = new Scanner(System.in);
 		int userInput;
 		System.out.println("*****PhoneBook******--PhNumoogle--******PhoneBook*****");
 		System.out.println("\nSearch Menu:            ");
@@ -282,6 +311,8 @@ public class PhoneBook {
 							"\nEnter '4' to search by Phone Number\nEnter '5' to search by city\nEnter '6' to search by state."+
 							"\nEnter '7' to quit the program\nEnter your chocie: ");
 		userInput = scanner.nextInt();
+		scanner.close();
+
 		
 		return userInput;
 	}
